@@ -2,8 +2,8 @@ name: test
 
 on:
   push:
-    branches:
-    - master
+    # branches:
+    # - master
   pull_request:
     branches:
     - master
@@ -25,20 +25,23 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
 
     - name: Ensure latest pip
       run: python -m pip install --upgrade pip
 
     - name: Install ourself
+      env:
+        PIP_GLOBAL_OPTION: '--no-cffi-backend,--rust-backend'
       run: |
         pip install -e .
         pip install -e ./backend
@@ -71,7 +74,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ env.STABLE_PYTHON_VERSION }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.STABLE_PYTHON_VERSION }}
 
@@ -119,15 +122,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
 
     - name: Install tools
       run: pip install --upgrade -r backend/tests/downstream/requirements.txt
@@ -146,7 +150,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up Python ${{ env.STABLE_PYTHON_VERSION }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.STABLE_PYTHON_VERSION }}
 
